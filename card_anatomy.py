@@ -1,8 +1,12 @@
 import random
 
+
 class CardAnatomy:
     def __init__(self):
         self.__accounts = {}
+        self.converted_list_of_numbers = []
+        self.last_digit_card = 0
+        self.card_number_sum = 0
         self.choice = 0
         self.__balance = 0
         self.exit_point = False
@@ -14,42 +18,65 @@ class CardAnatomy:
 1. Create an account
 2. Log into account
 0. Exit""")
-        self.choice = int(input(" "))
+        self.choice = int(input(""))
         return self.user_choice()
 
 
     def __create_card(self):
-        # a = random.randint(0000000000, 9999999999)
-        # card = 4000000000000000 + a  # Se asigna un numero aleatorio a los 10 ultimos digitos
-        random.seed(random.randint(0, 5000))
-        card = 4000000000000000 + random.randint(0000000000, 9999999999)
-        pin = (random.randint(0, 9999))  # Nº aleatorio para el PIN
-        pin = str(pin).zfill(4)
-        self.__accounts[card] = int(pin)
-        print(f"""
+        while True:
+            random.seed(random.randint(0, 5000))
+            card = 4000000000000000 + random.randint(0000000000, 9999999999)
+            pin = (random.randint(0, 9999))
+            pin = str(pin).zfill(4)
+
+            self.converted_list_of_numbers = list(map(int, list(str(card))))[::-1]
+            self.last_digit_card, self.card_number_sum = 0, 0
+
+            for num in range(0, len(self.converted_list_of_numbers)):
+                if not num == 0:
+                    if num % 2 != 0:
+                        self.card_number_sum += self.converted_list_of_numbers[num] * 2 - 9 \
+                            if self.converted_list_of_numbers[num] * 2 > 9 else self.converted_list_of_numbers[num] * 2
+                    else:
+                        self.card_number_sum += self.converted_list_of_numbers[num]
+                else:
+                    self.last_digit_card = self.converted_list_of_numbers[num]
+
+            if (self.card_number_sum + self.last_digit_card) % 10 == 0:
+                self.__accounts[card] = int(pin)
+                print(f"""
 Your card has been created
 Your card number:
 {card}
 Your card PIN:
 {pin}""")
-        return self.main_menu()
+                return self.main_menu()
+            else:
+                continue
+
 
 
     def entrance_to_personal_office(self):
-        check_login = int(input("""
+        for _ in iter(int, 1):
+            check_login = input("""
 Enter your card number:
- """))
-        check_pin = int(input("""Enter your PIN:
- """))
-        if check_login in self.__accounts and self.__accounts[check_login] == check_pin:
-            print("""
+""")
+            check_pin = input("""Enter your PIN:
+""")
+            if check_login.isdigit() and check_pin.isdigit():
+                check_login = int(check_login)
+                check_pin = int(check_pin)
+                if self.__accounts.get(check_login) == check_pin:
+                    print("""
 You have successfully logged in!""")
-            self.__function_selection = self.user_account()
-        else:
-            print("""
+                    self.__function_selection = self.user_account()
+                else:
+                    print("""
 Wrong card number or PIN!""")
-            self.__function_selection = self.main_menu()
-        return self.__function_selection
+                    self.__function_selection = self.main_menu()
+                return self.__function_selection
+            else:
+                continue
 
 
     def user_account(self):
@@ -89,4 +116,3 @@ Balance: {self.__balance}""")
 
 ron = CardAnatomy()
 print(ron.main_menu())
-
