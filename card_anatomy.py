@@ -4,9 +4,9 @@ import random
 class CardAnatomy:
     def __init__(self):
         self.__accounts = {}
-        self.converted_list_of_numbers = []
-        self.last_digit_card = 0
-        self.card_number_sum = 0
+        self.__converted_list_of_numbers = []
+        self.__last_digit_card = 0
+        self.__card_number_sum = 0
         self.choice = 0
         self.__balance = 0
         self.exit_point = False
@@ -29,20 +29,21 @@ class CardAnatomy:
             pin = (random.randint(0, 9999))
             pin = str(pin).zfill(4)
 
-            self.converted_list_of_numbers = list(map(int, list(str(card))))[::-1]
-            self.last_digit_card, self.card_number_sum = 0, 0
+            self.__converted_list_of_numbers = list(map(int, list(str(card))))[::-1]
+            self.__last_digit_card, self.__card_number_sum = 0, 0
 
-            for num in range(0, len(self.converted_list_of_numbers)):
+            for num in range(0, len(self.__converted_list_of_numbers)):
                 if not num == 0:
                     if num % 2 != 0:
-                        self.card_number_sum += self.converted_list_of_numbers[num] * 2 - 9 \
-                            if self.converted_list_of_numbers[num] * 2 > 9 else self.converted_list_of_numbers[num] * 2
+                        self.__card_number_sum += self.__converted_list_of_numbers[num] * 2 - 9 \
+                            if self.__converted_list_of_numbers[num] * 2 > 9 else\
+                            self.__converted_list_of_numbers[num] * 2
                     else:
-                        self.card_number_sum += self.converted_list_of_numbers[num]
+                        self.__card_number_sum += self.__converted_list_of_numbers[num]
                 else:
-                    self.last_digit_card = self.converted_list_of_numbers[num]
+                    self.__last_digit_card = self.__converted_list_of_numbers[num]
 
-            if (self.card_number_sum + self.last_digit_card) % 10 == 0:
+            if (self.__card_number_sum + self.__last_digit_card) % 10 == 0:
                 self.__accounts[card] = int(pin)
                 print(f"""
 Your card has been created
@@ -56,7 +57,7 @@ Your card PIN:
 
 
 
-    def entrance_to_personal_office(self):
+    def authorization(self):
         for _ in iter(int, 1):
             check_login = input("""
 Enter your card number:
@@ -103,7 +104,7 @@ Balance: {self.__balance}""")
             if self.choice == 1:
                 self.__function_selection = self.__create_card()
             elif self.choice == 2:
-                self.__function_selection = self.entrance_to_personal_office()
+                self.__function_selection = self.authorization()
             elif self.choice == 0:
                 self.exit_point = True
                 self.__function_selection = self.exit_s_db()
