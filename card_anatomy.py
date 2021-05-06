@@ -1,5 +1,5 @@
 import random
-
+import sqlite3 as sl
 
 class CardAnatomy:
     def __init__(self):
@@ -11,6 +11,16 @@ class CardAnatomy:
         self.__balance = 0
         self.exit_point = False
         self.__function_selection = 0
+        self.conn = sl.connect('card.s3db')
+        self.conn.execute("""
+CREATE TABLE IF NOT EXISTS card 
+(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    number TEXT,
+    pin TEXT,
+    balance INTEGER DEFAULT 0
+);
+                        """)
 
 
     def main_menu(self):
@@ -44,7 +54,8 @@ class CardAnatomy:
                     self.__last_digit_card = self.__converted_list_of_numbers[num]
 
             if (self.__card_number_sum + self.__last_digit_card) % 10 == 0:
-                self.__accounts[card] = int(pin)
+                self.__accounts[str(card)] = pin
+                self.conn.execute('INSERT INTO card (number, pin) values( ?, ?)', (str(card), pin))
                 print(f"""
 Your card has been created
 Your card number:
@@ -65,8 +76,6 @@ Enter your card number:
             check_pin = input("""Enter your PIN:
 """)
             if check_login.isdigit() and check_pin.isdigit():
-                check_login = int(check_login)
-                check_pin = int(check_pin)
                 if self.__accounts.get(check_login) == check_pin:
                     print("""
 You have successfully logged in!""")
@@ -112,6 +121,8 @@ Balance: {self.__balance}""")
 
 
     def exit_s_db(self):
+        self.conn.commit()
+        self.conn.close()
         return "Bye!"
 
 
