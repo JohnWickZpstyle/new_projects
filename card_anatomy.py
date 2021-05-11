@@ -107,18 +107,19 @@ Balance: {self.__balance}""")
                 self.__function_selection = self.exit_s_db()
         return self.__function_selection
 
-
     def user_choice(self):
-        while not self.exit_point and self.choice in [0, 1, 2]:
+        while not self.exit_point:
             if self.choice == 1:
                 self.__function_selection = self.__create_card()
             elif self.choice == 2:
                 self.__function_selection = self.authorization()
             elif self.choice == 0:
-                self.exit_point = True
                 self.__function_selection = self.exit_s_db()
+                self.exit_point = True
+            else:
+                self.__function_selection = self.main_menu()
+                self.exit_point = True
         return self.__function_selection
-
 
     def exit_s_db(self):
         self.conn.commit()
